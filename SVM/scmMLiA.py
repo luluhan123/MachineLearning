@@ -33,18 +33,18 @@ def smoSimple(dataMatIn,classLabels,C,toler,maxIter):
     b = 0
     m,n = shape(dataMatrix)
     alphas = mat(zeros((m,1)))
-    iter = 0
+    iter = 0 # 循环次数
     while(iter<maxIter):
-        alphaPairsChanged = 0
+        alphaPairsChanged = 0 # 判断是否进行了优化
         for i in range(m):
-            fxi = float(multiply(alphas,labelMat).T * (dataMatrix * dataMatrix[i,:].T)) + b
-            Ei = fxi - float(labelMat[i])
+            fxi = float(multiply(alphas,labelMat).T * (dataMatrix * dataMatrix[i,:].T)) + b # 预测的类别
+            Ei = fxi - float(labelMat[i]) # 误差
             if((labelMat[i] * Ei < -toler) and (alphas[i] < C)) or \
                     ((labelMat[i] * Ei > toler) and (alphas[i]>0)):
-                j = selectJrand(i,m)
+                j = selectJrand(i,m) #选择第二个变量
                 fxj = float(multiply(alphas, labelMat).T * (dataMatrix * dataMatrix[j, :].T)) + b
                 Ej = fxj - float(labelMat[j])
-                alphaIold = alphas[i].copy()
+                alphaIold = alphas[i].copy() #python通过引用的方式传递列表，所以必须为它分配新的内存
                 alphaJold = alphas[j].copy()
                 if(labelMat[i] != labelMat[j]):
                     L = max(0,alphas[j] - alphas[i])
@@ -90,5 +90,6 @@ def smoSimple(dataMatIn,classLabels,C,toler,maxIter):
 if __name__ == '__main__':
     dataArr,labelArr = loadDataSet('SVM/testSet.txt')
     b,alphas = smoSimple(dataArr, labelArr, 0.6, 0.001, 40)
-    print(b)
-    print(alphas[alphas>0])
+    for i in range(100):
+        if(alphas[i] > 0.0):
+            print(dataArr[i],labelArr[i])
